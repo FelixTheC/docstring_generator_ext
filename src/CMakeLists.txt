@@ -22,8 +22,8 @@ else ()
     find_package(Python 3.10 COMPONENTS Interpreter Development REQUIRED)
     add_subdirectory(extern/pybind11)
 
-    add_executable(src main.cpp docstringFormat.hpp)
-    pybind11_add_module(src example.cpp)
+    add_executable(src docstringFormat.cpp)
+#    pybind11_add_module(src docstringFormat.cpp)
 
     target_link_libraries(src PRIVATE pybind11::module pybind11::lto pybind11::windows_extras)
 endif ()
