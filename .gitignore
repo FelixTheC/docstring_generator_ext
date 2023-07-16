@@ -130,3 +130,5 @@ dmypy.json
 .docstring_generator/
 /venv_3_10/
 /src/.idea/
+
+.idea/
