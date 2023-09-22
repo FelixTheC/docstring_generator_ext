@@ -12,8 +12,6 @@
 
 namespace py = pybind11;
 
-const std::string FILE_PATH = "/home/felix/PycharmProjects/docstring_generator/examples/mixed_before.py";
-
 const std::string PY_TAB = "    ";
 
 auto replaceAll = [](std::string& str_, const std::string& original, const std::string& new_){
@@ -1049,6 +1047,13 @@ void parse_file(std::string &file_path, DocstringFormatStyle &formatStyle)
         }
     }
     
+    std::sort(infos.begin(),
+              infos.end(),
+              [](FunctionInfo &left, FunctionInfo &right)
+              {
+                  return left.get_file_write_position() > right.get_file_write_position();
+              });
+    
     write_to_file_position(std::move(infos), file_path, formatStyle);
 }
 
@@ -1068,8 +1073,6 @@ void write_to_file_position(std::vector<FunctionInfo> &&infos,
     }
     
     file.close();
-    
-    std::reverse(infos.begin(), infos.end());
     
     for (auto &val : infos)
     {

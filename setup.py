@@ -4,7 +4,7 @@ import pathlib
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 from setuptools import setup
 
-__version__ = "0.0.31"
+__version__ = "0.0.33"
 
 HERE = pathlib.Path(__file__).parent
 README = (HERE / "README.md").read_text()
