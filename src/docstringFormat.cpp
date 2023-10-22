@@ -13,7 +13,7 @@
 namespace py = pybind11;
 
 #ifdef _WIN32
-typedef unsigned int uint
+typedef unsigned int uint;
 #endif
 
 const std::string PY_TAB = "    ";
