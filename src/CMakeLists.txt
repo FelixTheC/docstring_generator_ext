@@ -1,36 +1,24 @@
 cmake_minimum_required(VERSION 3.24)
-project(src VERSION 1.0 LANGUAGES CXX)
+project(docstring_generator_ext VERSION 1.0 LANGUAGES CXX)
 
-if ("$ENV{TESTING}")
-    enable_testing()
+set(pybind11_DIR "../venv/lib/python3.12/site-packages/pybind11/share/cmake/pybind11")
+set(PYBIND11_PYTHON_VERSION 3.12)
 
-    include(FetchContent)
-    FetchContent_Declare(
-            googletest
-            URL https://github.com/google/googletest/archive/refs/tags/release-1.12.1.zip
-    )
+find_package(Python 3.12 COMPONENTS Interpreter Development REQUIRED)
+find_package(pybind11 CONFIG REQUIRED)
 
-    FetchContent_MakeAvailable(googletest)
-    include_directories(${GTEST_INCLUDE_DIRS})
+pybind11_add_module(${PROJECT_NAME} docstringFormat.cpp)
 
-    add_executable(src main.cpp)
-    target_link_libraries(src gtest_main)
+target_link_libraries(${PROJECT_NAME} PRIVATE pybind11::embed)
 
-    include(GoogleTest)
-
-else ()
-    find_package(Python 3.10 COMPONENTS Interpreter Development REQUIRED)
-    add_subdirectory(extern/pybind11)
-
-    add_executable(src docstringFormat.cpp)
-#    pybind11_add_module(src docstringFormat.cpp)
-
-    target_link_libraries(src PRIVATE pybind11::module pybind11::lto pybind11::windows_extras)
-endif ()
-
+pybind11_extension(${PROJECT_NAME})
+if(NOT MSVC AND NOT ${CMAKE_BUILD_TYPE} MATCHES Debug|RelWithDebInfo)
+    # Strip unnecessary sections of the binary on Linux/macOS
+    pybind11_strip(${PROJECT_NAME})
+endif()
 
 if ("$ENV{GCC}")
-    target_compile_options(src PRIVATE
+    target_compile_options(${PROJECT_NAME} PRIVATE
             -Wall
             -Wextra
             -Werror
@@ -43,11 +31,13 @@ if ("$ENV{GCC}")
             -fno-omit-frame-pointer
             -fsanitize=address
             )
-    target_link_options(src PRIVATE -fsanitize=address)
 endif ()
 
-target_compile_features(src PUBLIC cxx_std_20)
-set_target_properties(src PROPERTIES
-        CXX_STANDARD 20
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
+set_target_properties(${PROJECT_NAME} PROPERTIES
+        CXX_STANDARD 17
         CXX_STANDARD_REQUIRED YES
-        CXX_EXTENSIONS NO)
+        CXX_EXTENSIONS NO
+        CMAKE_CXX_FLAGS O3
+        CMAKE_CXX_FLAGS_RELEASE O3
+        CXX_VISIBILITY_PRESET "hidden")

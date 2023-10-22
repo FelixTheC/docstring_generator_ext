@@ -1,8 +1,10 @@
 # Available at setup time due to pyproject.toml
 import pathlib
-
-from pybind11.setup_helpers import Pybind11Extension, build_ext
 from setuptools import setup
+try:
+    from pybind11.setup_helpers import Pybind11Extension
+except ImportError:
+    from setuptools import Extension as Pybind11Extension
 
 __version__ = "0.0.33"
 
@@ -49,7 +51,6 @@ setup(
     extras_require={"test": "pytest"},
     # Currently, build_ext only provides an optional "highest supported C++
     # level" feature, but in the future it may provide more features.
-    cmdclass={"build_ext": build_ext},
     zip_safe=False,
-    python_requires="<3.12",
+    python_requires="<=3.12",
 )

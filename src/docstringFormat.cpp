@@ -12,6 +12,10 @@
 
 namespace py = pybind11;
 
+#ifdef _WIN32
+typedef unsigned int uint
+#endif
+
 const std::string PY_TAB = "    ";
 
 auto replaceAll = [](std::string& str_, const std::string& original, const std::string& new_){
@@ -154,8 +158,6 @@ struct FunctionParameter
     
     void update_rest_description(const std::string &descr)
     {
-        std::stringstream sstream;
-        
         auto param_name = ":param " + name + ":";
         auto type_param = ":type " + name + ":";
         auto kind_param = ":kind " + name + ":";
@@ -998,7 +1000,7 @@ void get_docstring_arg_descr(FunctionInfo &functionInfo) noexcept
 void parse_file(std::string &file_path, DocstringFormatStyle &formatStyle)
 {
     std::string file_path_cache = file_path;
-    py::module ast_module = py::module::import("ast");
+    py::module ast_module = py::module_::import("ast");
     py::object generator_result = ast_module.attr("walk")(ast_module.attr("parse")(read_file(file_path)));
     py::iterator iter = py::iter(generator_result);
     
